@@ -14,13 +14,11 @@ unified_metric:
     word_layer: 24
     loss: mse
     dropout: 0.1
-    batch_size: 16
+    batch_size: 1
     train_data: 
-      - data/1720-da.csv
+      - data/train_wo_bunny.csv
     validation_data: 
-      - data/wmt-ende-newstest2021.csv
-      - data/wmt-enru-newstest2021.csv
-      - data/wmt-zhen-newstest2021.csv
+      - data/val_wo_bunny.csv
     hidden_sizes:
       - 3072
       - 1024
@@ -28,7 +26,6 @@ unified_metric:
     input_segments:
       - mt
       - src
-      - ref
     word_level_training: False
     
 trainer: ../trainer.yaml

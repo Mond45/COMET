@@ -5,7 +5,7 @@ init_args:
   monitor: val_kendall
   verbose: True
   save_last: False
-  save_top_k: 2
+  save_top_k: 1
   mode: max
   auto_insert_metric_name: True
   save_weights_only: True

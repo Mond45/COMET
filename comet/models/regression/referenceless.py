@@ -129,7 +129,7 @@ class ReferencelessRegression(RegressionMetric):
 
     def requires_references(self) -> bool:
         return False
-    
+
     def enable_context(self):
         if self.pool == "avg":
             self.use_context = True
@@ -160,7 +160,7 @@ class ReferencelessRegression(RegressionMetric):
 
         if stage == "predict":
             return model_inputs
-        
+
         scores = [float(s["score"]) for s in sample]
         targets = Target(score=torch.tensor(scores, dtype=torch.float))
 

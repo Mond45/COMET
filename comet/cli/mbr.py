@@ -36,7 +36,7 @@ optional arguments:
                        applying MBR. Disabled by default. (type: int, default: 0)
   --qe_model QE_MODEL   Reference Free model used for reranking before MBR. (type: str,
                         default: Unbabel/wmt23-cometkiwi-da-xl)
-  --model MODEL         COMET model to be used. 
+  --model MODEL         COMET model to be used.
                         (type: str, default: Unbabel/wmt23-comet-da-xl)
   --model_storage_path MODEL_STORAGE_PATH
                         Path to the directory where models will be stored. By default
@@ -55,7 +55,8 @@ from tqdm import tqdm
 
 from comet.models import RegressionMetric, download_model, load_from_checkpoint
 
-torch.set_float32_matmul_precision('high')
+torch.set_float32_matmul_precision("high")
+
 
 def build_embeddings(
     sources: List[str],
@@ -141,6 +142,7 @@ def mbr_decoding(
 
     return mbr_matrix
 
+
 def rerank_top_k(
     sources: List[str],
     translations: List[str],
@@ -178,9 +180,12 @@ def rerank_top_k(
     topk_indices = np.argsort(seg_scores, axis=1)
     topk_translations = []
     for i in range(len(sources)):
-        topk_translations += [translations[i][idx] for idx in topk_indices[i][::-1][:topk]]
+        topk_translations += [
+            translations[i][idx] for idx in topk_indices[i][::-1][:topk]
+        ]
 
     return topk_translations
+
 
 def mbr_command() -> None:
     parser = ArgumentParser(description="Command for Minimum Bayes Risk Decoding.")
@@ -238,10 +243,7 @@ def mbr_command() -> None:
     num_samples = cfg.num_samples
     # Running QE reranking before MBR!
     if cfg.rerank_top_k > 0:
-        if (
-            cfg.qe_model.endswith(".ckpt")
-            and os.path.exists(cfg.qe_model)
-        ):
+        if cfg.qe_model.endswith(".ckpt") and os.path.exists(cfg.qe_model):
             qe_model_path = cfg.qe_model
         else:
             qe_model_path = download_model(
@@ -256,7 +258,13 @@ def mbr_command() -> None:
         ), "--qe_model expects a Reference Free model!"
 
         translations = rerank_top_k(
-            sources, translations, model, cfg.batch_size, cfg.gpus, cfg.num_samples, cfg.rerank_top_k
+            sources,
+            translations,
+            model,
+            cfg.batch_size,
+            cfg.gpus,
+            cfg.num_samples,
+            cfg.rerank_top_k,
         )
         num_samples = cfg.rerank_top_k
 
@@ -264,7 +272,7 @@ def mbr_command() -> None:
         model_path = cfg.model
     else:
         model_path = download_model(cfg.model, saving_directory=cfg.model_storage_path)
-    
+
     model = load_from_checkpoint(model_path)
     model.eval()
     model.cuda()
@@ -274,7 +282,7 @@ def mbr_command() -> None:
                 model.__class__.__name__
             )
         )
-        
+
     src_embeddings, mt_embeddings = build_embeddings(
         sources, translations, model, cfg.batch_size
     )

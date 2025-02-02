@@ -15,7 +15,7 @@
 r"""
 RemBERT Encoder
 ===============
-    Pretrained RemBERT encoder from Google. This encoder is similar to BERT but uses 
+    Pretrained RemBERT encoder from Google. This encoder is similar to BERT but uses
     sentencepiece like XLMR.
 """
 from transformers import RemBertConfig, RemBertModel, RemBertTokenizerFast

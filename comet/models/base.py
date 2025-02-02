@@ -162,7 +162,9 @@ class CometModel(ptl.LightningModule, metaclass=abc.ABCMeta):
     def enable_context(self):
         """Function that extends COMET to use preceding context as described in
         https://statmt.org/wmt22/pdf/2022.wmt-1.6.pdf."""
-        logger.warning("Context should only be enabled for RegressionMetric with Average Pooling.")
+        logger.warning(
+            "Context should only be enabled for RegressionMetric with Average Pooling."
+        )
 
     @abc.abstractmethod
     def read_training_data(self) -> List[dict]:
@@ -352,7 +354,7 @@ class CometModel(ptl.LightningModule, metaclass=abc.ABCMeta):
                 embeddings,
                 attention_mask,
                 self.encoder.tokenizer.pad_token_id,
-                self.encoder.tokenizer.sep_token_id, 
+                self.encoder.tokenizer.sep_token_id,
                 self.use_context,
             )
 
@@ -593,7 +595,7 @@ class CometModel(ptl.LightningModule, metaclass=abc.ABCMeta):
             )
         elif gpus > 0:
             devices = gpus
-        else: # gpu = 0
+        else:  # gpu = 0
             devices = "auto"
 
         sampler = SequentialSampler(samples)
@@ -622,7 +624,9 @@ class CometModel(ptl.LightningModule, metaclass=abc.ABCMeta):
             sampler=sampler,
             collate_fn=self.prepare_for_inference,
             num_workers=num_workers,
-            multiprocessing_context="fork" if torch.backends.mps.is_available() else None,
+            multiprocessing_context=(
+                "fork" if torch.backends.mps.is_available() else None
+            ),
         )
         if gpus > 1:
             pred_writer = CustomWriter()

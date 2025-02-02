@@ -39,12 +39,12 @@ optional arguments:
                         Path to the directory where models will be stored. By default
                         its saved in ~/.cache/torch/unbabel_comet/ (default: null)
   --num_workers NUM_WORKERS
-                        Number of workers to use when loading data. (type: int, 
+                        Number of workers to use when loading data. (type: int,
                         default: null)
   --disable_cache       Disables sentence embeddings caching. This makes inference
                         slower but saves memory. (default: False)
   --disable_length_batching
-                        Disables length batching. This makes inference slower. 
+                        Disables length batching. This makes inference slower.
                         (default: False)
   --print_cache_info    Print information about COMET cache. (default: False)
 """
@@ -63,7 +63,8 @@ from sacrebleu.utils import get_reference_files, get_source_file
 from comet import download_model, load_from_checkpoint
 from comet.models.utils import split_sequence_into_sublists
 
-torch.set_float32_matmul_precision('high')
+torch.set_float32_matmul_precision("high")
+
 
 def score_command() -> None:
     parser = ArgumentParser(description="Command for scoring MT systems.")
@@ -77,7 +78,9 @@ def score_command() -> None:
         "--quiet", action="store_true", help="Sets all loggers to ERROR level."
     )
     parser.add_argument(
-        "--enable-context", action="store_true", help="Enables contextual extension of COMET on inputs preprocessed with context information."
+        "--enable-context",
+        action="store_true",
+        help="Enables contextual extension of COMET on inputs preprocessed with context information.",
     )
     parser.add_argument(
         "--only_system", action="store_true", help="Prints only the final system score."
@@ -213,7 +216,7 @@ def score_command() -> None:
             errors = outputs.metadata.error_spans
         else:
             errors = []
-        
+
         if len(cfg.translations) > 1:
             seg_scores = np.array_split(seg_scores, len(cfg.translations))
             sys_scores = [sum(split) / len(split) for split in seg_scores]
@@ -226,7 +229,9 @@ def score_command() -> None:
             seg_scores = [
                 seg_scores,
             ]
-            errors = [errors, ]
+            errors = [
+                errors,
+            ]
             data = [
                 np.array(data),
             ]
@@ -261,7 +266,7 @@ def score_command() -> None:
             data[files[j]][i]["COMET"] = seg_scores[j][i]
             if errors and errors[j] and errors[j][i]:
                 data[files[j]][i]["errors"] = errors[j][i]
-                
+
             if not cfg.only_system:
                 print(
                     "{}\tSegment {}\tscore: {:.4f}".format(

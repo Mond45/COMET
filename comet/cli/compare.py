@@ -40,7 +40,7 @@ optional arguments:
                         default: 0.4)
   --t_test_alternative T_TEST_ALTERNATIVE
                         Alternative hypothesis from scipy.stats.ttest_rel. The
-                        following options are available: 'two-sided', 'less', 
+                        following options are available: 'two-sided', 'less',
                         'greater'. Defaults to 'less' (type: str, default: two-sided)
   --to_json TO_JSON     Exports results to a json file. (type: str, default: "")
   --model MODEL         COMET model to be used. (type: str, default: wmt20-comet-da)
@@ -73,7 +73,7 @@ from tabulate import tabulate
 
 from comet import download_model, load_from_checkpoint
 
-torch.set_float32_matmul_precision('high')
+torch.set_float32_matmul_precision("high")
 
 Statistical_test_info = Dict[str, Union[Path_fr, Dict[str, float]]]
 

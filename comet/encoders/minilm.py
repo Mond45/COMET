@@ -15,7 +15,7 @@
 r"""
 MiniLM Encoder
 ==============
-    Pretrained MiniLM encoder from Microsoft. This encoder uses a BERT 
+    Pretrained MiniLM encoder from Microsoft. This encoder uses a BERT
     architecture with an XLMR tokenizer.
 """
 from transformers import BertConfig, BertModel, XLMRobertaTokenizerFast

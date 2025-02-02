@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-LRU Cache 
+LRU Cache
 ==========
 LRU Cache function decorator modified to work with tensor arguments.
 
@@ -53,7 +53,7 @@ def _make_key(
         if torch.is_tensor(x):
             if len(x.size()) == 0:
                 raise Exception("Tensor needs to be at least 1-Dimensional.")
-            
+
             if len(x.size()) == 1:
                 new_args.append("\n".join([repr(x), repr(x.shape)]))
             else:

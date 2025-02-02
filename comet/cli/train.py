@@ -28,10 +28,13 @@ For more details run the following command:
     comet-train --help
 ```
 """
+from copy import deepcopy
+from functools import partial
 import json
 import logging
 import warnings
 
+import optuna
 import torch
 from jsonargparse import ActionConfigFile, ArgumentParser, namespace_to_dict
 from pytorch_lightning import seed_everything
@@ -177,22 +180,32 @@ def initialize_model(configs):
     return model
 
 
+def optuna_objective(trial: optuna.trial.Trial, cfg):
+    cfg = deepcopy(cfg)
+    cfg.unified_metric.init_args.learning_rate = trial.suggest_float(
+        "learning_rate", 1e-6, 1e-4, log=True
+    )
+    trainer = initialize_trainer(cfg)
+    model = initialize_model(cfg)
+    trainer.fit(model)
+    return trainer.early_stopping_callback.best_score.item()
+
+
 def train_command() -> None:
     parser = read_arguments()
     cfg = parser.parse_args()
+
     seed_everything(cfg.seed_everything)
 
-    trainer = initialize_trainer(cfg)
-    model = initialize_model(cfg)
-    # Related to train/val_dataloaders:
-    # 2 workers per gpu is enough! If set to the number of cpus on this machine
-    # it throws another exception saying its too many workers.
     warnings.filterwarnings(
         "ignore",
         category=UserWarning,
         message=".*Consider increasing the value of the `num_workers` argument` .*",
     )
-    trainer.fit(model)
+
+    study = optuna.create_study(direction="maximize")
+    study.optimize(partial(optuna_objective, cfg=cfg), n_trials=10)
+    print(study.best_params)
 
 
 if __name__ == "__main__":

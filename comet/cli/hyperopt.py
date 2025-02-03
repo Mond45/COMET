@@ -10,13 +10,27 @@ from pytorch_lightning import seed_everything
 
 def optuna_objective(trial: optuna.trial.Trial, cfg):
     cfg = deepcopy(cfg)
-    cfg.unified_metric.init_args.learning_rate = trial.suggest_float(
-        "learning_rate", 1e-6, 1e-4, log=True
-    )
+
+    if cfg.regression_metric is not None:
+        model_cfg = cfg.regression_metric.init_args
+    elif cfg.referenceless_regression_metric is not None:
+        model_cfg = cfg.referenceless_regression_metric.init_args
+    elif cfg.ranking_metric is not None:
+        model_cfg = cfg.ranking_metric.init_args
+    elif cfg.unified_metric is not None:
+        model_cfg = cfg.unified_metric.init_args
+    else:
+        raise Exception("Model configurations missing!")
+
+    model_cfg.learning_rate = trial.suggest_float("learning_rate", 1e-6, 1e-4, log=True)
+
     trainer = initialize_trainer(cfg)
     model = initialize_model(cfg)
+
     trainer.fit(model)
+
     wandb.finish()
+
     return trainer.early_stopping_callback.best_score.item()
 
 

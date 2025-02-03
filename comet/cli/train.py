@@ -40,6 +40,7 @@ from pytorch_lightning.callbacks import (
     LearningRateMonitor,
     ModelCheckpoint,
 )
+from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.trainer.trainer import Trainer
 
 from comet.models import (
@@ -95,6 +96,7 @@ def initialize_trainer(configs) -> Trainer:
     trainer_args = namespace_to_dict(configs.trainer.init_args)
     lr_monitor = LearningRateMonitor(logging_interval="step")
     trainer_args["callbacks"] = [early_stop_callback, checkpoint_callback, lr_monitor]
+    trainer_args["logger"] = WandbLogger(project="COMETH")
     print("TRAINER ARGUMENTS: ")
     print(json.dumps(trainer_args, indent=4, default=lambda x: x.__dict__))
     trainer = Trainer(**trainer_args)

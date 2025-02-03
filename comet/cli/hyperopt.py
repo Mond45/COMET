@@ -3,6 +3,7 @@ from functools import partial
 import warnings
 
 import optuna
+import wandb
 from comet.cli.train import initialize_model, initialize_trainer, read_arguments
 from pytorch_lightning import seed_everything
 
@@ -15,6 +16,7 @@ def optuna_objective(trial: optuna.trial.Trial, cfg):
     trainer = initialize_trainer(cfg)
     model = initialize_model(cfg)
     trainer.fit(model)
+    wandb.finish()
     return trainer.early_stopping_callback.best_score.item()
 
 
